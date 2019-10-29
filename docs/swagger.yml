@@ -1,0 +1,598 @@
+---
+openapi: 3.0.2
+
+info:
+  title: TFS Integration Node API
+  version: 1.4.0
+  description: Integration API with TFS using Nodejs
+  contact:
+    name: Paulo Mariano
+    email: paulo.mariano@toroinvestimentos.com.br
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+
+servers:
+  - url: http://tfsintegrations.toroinvestimentos.com.br/api/v1
+    description: The production API server
+    port:
+      enum:
+        - '80'
+      default: '80'
+    basePath:
+      default: api/v1
+
+  - url: http://localhost:9090/api/v1
+    description: The localhost API server
+    port:
+      enum:
+        - '9090'
+      default: '9090'
+    basePath:
+      default: api/v1
+
+tags:
+  - name: Home
+    description: Informations about API
+  - name: PullRequest
+    description: Informations about PullRequests
+  - name: Repository
+    description: Informations about Respositories
+  - name: Workitems
+    description: Informations about Workitems
+
+paths:
+  /:
+    get:
+      tags:
+        - Home
+      summary: Get informations about PullRequests
+      responses:
+        200:
+          description: successful operation
+        500:
+          description: internal server error
+
+  /pullrequests:
+    get:
+      tags:
+        - PullRequest
+      summary: Get informations about a PullRequests  
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/PullRequest'
+        500:
+          description: internal server error
+
+  /pullrequests/{id}:
+    get:
+      tags:
+        - PullRequest
+      summary: Get informations about a PullRequest by ID
+      parameters:
+        - name: id
+          in: path
+          description: 'The PullRequest ID'
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/PullRequest'
+        500:
+          description: internal server error
+
+  /pullrequests/{id}/workitems:
+    get:
+      tags:
+        - PullRequest
+      summary: Get workitems list by PullRequest
+      parameters:
+        - name: id
+          in: path
+          description: 'The PullRequest ID'
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Workitem'
+        500:
+          description: internal server error
+
+  /pullrequests/repo/{repoId}:
+    get:
+      tags:
+        - PullRequest
+      summary: Get informations about a PullRequests by Repository
+      parameters:
+        - name: repoId
+          in: path
+          description: 'The respository ID'
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                properties:
+                  items:
+                    $ref: '#/components/schemas/PullRequest'
+        500:
+          description: internal server error
+
+  /pullrequests/createPullRequestStatus:
+    post:
+      tags:
+        - PullRequest
+      summary: Create new Pull Request status
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/PullRequestStatusBody'
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  properties:
+                    pullRequestId:
+                      type: integer
+                    status:
+                      type: string
+        500:
+          description: internal server error
+
+  /pullrequests/createTagAfterMerge:
+    post:
+      tags:
+        - PullRequest
+      summary: Create new tag after pull request merge
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                properties:
+                  name:
+                    type: string
+                  taggedObject:
+                    type: object
+                    properties:
+                      objectId:
+                        type: string
+                  message:
+                    type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Tag'
+        500:
+          description: internal server error
+
+  /repos:
+    get:
+      tags:
+        - Repository
+      summary: Get informations about all repositories
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Repository'
+        500:
+          description: internal server error
+
+  /repos/{id}:
+    get:
+      tags:
+        - Repository
+      summary: Get informations about a specific repository by Id
+      parameters:
+        - name: id
+          in: path
+          description: 'The Repository ID'
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Repository'
+        500:
+          description: internal server error
+
+  /repos/{id}/createTag:
+    post:
+      tags:
+        - Repository
+      summary:  Create a new tag in a respository
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                properties:
+                  name:
+                    type: string
+                  taggedObject:
+                    type: object
+                    properties:
+                      objectId:
+                        type: string
+                  message:
+                    type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Tag'
+        500:
+          description: internal server error
+
+  /workitems/{id}:
+    get:
+      tags:
+        - Workitems
+      summary: Get informations about a WorkItem by ID
+      parameters:
+        - name: id
+          in: path
+          description: 'The Workitem ID'
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  relations:
+                    $ref: '#components/schemas/Workitem'
+        500:
+          description: internal server error
+
+  /workitems/{id}/relations:
+    get:
+      tags:
+        - Workitems
+      summary: Get informations about a WorkItem by ID
+      parameters:
+        - name: id
+          in: path
+          description: 'The Workitem ID'
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  properties:
+                    rel:
+                      type: string
+                    url:
+                      type: string
+                    attributes:
+                      type: object
+        500:
+          description: internal server error
+
+  /workitems/{id}/_links:
+    get:
+      tags:
+        - Workitems
+      summary: Get informations about WorkItem links
+      parameters:
+        - name: id
+          in: path
+          description: 'The Workitem ID'
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  properties:
+                    self:
+                      type: object
+                      properties:
+                        href:
+                          type: string
+                    workItemUpdates:
+                      type: object
+                      properties:
+                        href:
+                          type: string
+                    workItemRevisions:
+                      type: object
+                      properties:
+                        href:
+                          type: string
+                    workItemHistory:
+                      type: object
+                      properties:
+                        href:
+                          type: string
+                    html:
+                      type: object
+                      properties:
+                        href:
+                          type: string
+                    workItemType:
+                      type: object
+                      properties:
+                        href:
+                          type: string
+                    fields:
+                      type: object
+                      properties:
+                        href:
+                          type: string
+        500:
+          description: internal server error
+
+  /workitems/updatePullRequestStatus:
+    post:
+      tags:
+        - Workitems
+      summary: Update Pull Request status related with a WorkItem
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/PullRequestStatusBody'
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  properties:
+                    pullRequestId:
+                      type: integer
+                    status:
+                      type: string
+        500:
+          description: internal server error
+
+components:
+  schemas:
+    Workitem:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        type:
+          type: string
+        state:
+          type: string
+        createdDate:
+          type: string
+          format: date
+        assignedTo:
+          type: string
+        url:
+          type: string
+
+    PullRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+          uniqueItems: true
+        title:
+          type: string
+        description:
+          type: string
+        url:
+          type: string
+        creationDate:
+          type: string
+          format: date
+        status:
+          type: string
+        createdBy:
+          type: object
+          properties:
+            displayName:
+              type: string
+            url:
+              type: string
+            id:
+              type: string
+              format: uuid
+            uniqueName:
+              type: string
+            imageUrl:
+              type: string
+        codeReviewId:
+          type: integer
+        repository:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            name:
+              type: string
+            url:
+              type: string
+        sourceRefName:
+          type: string
+        targetRefName:
+          type: string
+        mergeStatus:
+          type: string
+        reviewers:
+          type: array
+          items:
+            type: object
+            properties:
+              reviewerUrl:
+                type: string
+              vote:
+                type: integer
+              displayName:
+                type: string
+              url:
+                type: string
+              id:
+                type: string
+                format: uuid
+              uniqueName:
+                type: string
+              imageUrl:
+                type: string
+              isContainer:
+                type: boolean
+        workItems:
+          type: array
+          items:
+            $ref: "#/components/schemas/Workitem"
+
+    PullRequestStatusBody:
+      type: object
+      properties:
+        subscriptionId:
+          type: string
+          format: uuid
+        notificationId:
+          type: integer
+        eventType:
+          type: string
+        message:
+          type: object
+          properties:
+            markdown:
+              type: string
+        detailedMessage:
+          type: object
+          properties:
+            markdown:
+              type: string
+        resource:
+          type: object
+          properties:
+            id:
+              type: integer
+            workItemId:
+              type: integer
+            fields:
+              type: object
+              properties:
+                Microsoft.VSTS.Common.ClosedDate:
+                  type: object
+                  properties:
+                    newValue:
+                      type: string
+                      format: date
+
+    Repository:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        url:
+          type: string
+        project:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            name:
+              type: string
+            description:
+              type: string
+            url:
+              type: string
+            state:
+              type: string
+            revision:
+              type: integer
+            visibility:
+              type: integer
+        defaultBranch:
+          type: string
+        remoteUrl:
+          type: string
+        sshUrl:
+          type: string
+
+    Tag:
+      type: object
+      properties:
+        name:
+          type: string
+        objectId:
+          type: string
+        taggedObject:
+          type: object
+          properties:
+            name:
+              type: string
+            email:
+              type: string
+              format: email
+            date:
+              type: string
+              format: date
+        message:
+          type: string
+        url:
+          type: string

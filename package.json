@@ -1,0 +1,37 @@
+{
+  "name": "tfs-integration-nodeapi",
+  "version": "1.4.1",
+  "description": "Integration API with TFS using Nodejs",
+  "main": "app.js",
+  "scripts": {
+    "start": "pm2-runtime start worker.yml",
+    "stop": "pm2-runtime stop worker.yml",
+    "watch": "nodemon server.js -V",
+    "lint": "eslint .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://alm.toroinvestimentos.com.br/DefaultCollection/ToroAgile/_git/tfs-integration-nodeapi"
+  },
+  "author": "Paulo Mariano",
+  "license": "MIT",
+  "dependencies": {
+    "azure-devops-node-api": "^9.0.1",
+    "consign": "^0.1.6",
+    "eslint-config-google": "^0.13.0",
+    "express": "^4.17.1",
+    "moment": "^2.24.0",
+    "morgan": "^1.9.1",
+    "nodemon": "^1.19.1",
+    "path": "^0.12.7",
+    "rfs": "^8.0.4",
+    "rotating-file-stream": "^1.4.1",
+    "simple-node-logger": "^18.12.22",
+    "swagger-ui-express": "^4.0.7",
+    "yamljs": "^0.3.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.16.0"
+  }
+}

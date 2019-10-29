@@ -1,0 +1,49 @@
+version: "3.7"
+
+services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx_integration_api_balancer
+    restart: always
+    networks:
+      - balancer
+      - backend
+    volumes:
+      - ./configs/nginx:/etc/nginx/conf.d
+    ports:
+      - "80:80"
+    links:
+      - ${DOCKER_CONTAINER_NAME}_1
+      - ${DOCKER_CONTAINER_NAME}_2
+
+  tfs_integration_api_1:
+    image: ${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:${APP_VERSION}
+    container_name: ${DOCKER_CONTAINER_NAME}_1
+    restart: always
+    environment:
+      - SERVER_HOST=${SERVER_HOST}
+      - SERVER_PORT=${SERVER_PORT}
+      - TFS_PROJECT=${TFS_PROJECT}
+      - TFS_URL=${TFS_URL}
+      - TFS_USER_TOKEN=${TFS_USER_TOKEN}
+    networks:
+      - backend
+
+  tfs_integration_api_2:
+    image: ${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:${APP_VERSION}
+    container_name: ${DOCKER_CONTAINER_NAME}_2
+    restart: always
+    environment:
+      - SERVER_HOST=${SERVER_HOST}
+      - SERVER_PORT=${SERVER_PORT}
+      - TFS_PROJECT=${TFS_PROJECT}
+      - TFS_URL=${TFS_URL}
+      - TFS_USER_TOKEN=${TFS_USER_TOKEN}
+    networks:
+      - backend
+
+networks:
+  balancer:
+    name: tfs_integration_api_balancer
+  backend:
+    name: tfs_integration_api_backend
