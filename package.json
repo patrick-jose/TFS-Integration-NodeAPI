@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "http://alm.toroinvestimentos.com.br/DefaultCollection/ToroAgile/_git/tfs-integration-nodeapi"
+    "url": "http://azuredevops/DefaultCollection/Agile/_git/tfs-integration-nodeapi"
   },
   "author": "Paulo Mariano",
   "license": "MIT",
