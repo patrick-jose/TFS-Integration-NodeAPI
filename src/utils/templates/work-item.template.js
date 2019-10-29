@@ -21,8 +21,8 @@ module.exports.workItemPullRequest = (workItem) => {
     }
 
     workItemTemplate.closedBy = workItem.fields['Microsoft.VSTS.Common.ClosedBy'];
-    workItemTemplate.qualityPhase = workItem.fields['Agile.Toro.Quality.Phase'];
-    workItemTemplate.deploymentPhase = workItem.fields['Agile.Toro.Deployment.Phase'];
+    workItemTemplate.qualityPhase = workItem.fields['Agile.Quality.Phase'];
+    workItemTemplate.deploymentPhase = workItem.fields['Agile.Deployment.Phase'];
     workItemTemplate.url = `${vstsURL}${vstsProject}/_workitems?id=${workItem.id}`;
 
     return workItemTemplate;
